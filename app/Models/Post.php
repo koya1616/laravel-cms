@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class Post extends Model
 {
@@ -18,6 +19,26 @@ class Post extends Model
         'is_public' => 'bool',
         'published_at' => 'datetime'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // 保存時user_idをログインユーザーに設定
+        self::saving(function($post) {
+            $post->user_id = \Auth::id();
+        });
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 
     // 公開のみ表示
     public function scopePublic(Builder $query)

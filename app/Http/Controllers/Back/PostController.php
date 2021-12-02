@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Tag;
 use App\Http\Requests\PostRequest;
 
 class PostController extends Controller
@@ -16,7 +17,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::latest('id')->paginate(20);
+        $posts = Post::with('user')->latest('id')->paginate(20);
         return view('back.posts.index', compact('posts'));
     }
 
@@ -27,7 +28,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('back.posts.create');
+        $tags = Tag::pluck('name', 'id')->toArray();
+        return view('back.posts.create', compact('tags'));
     }
 
     /**
@@ -39,6 +41,8 @@ class PostController extends Controller
     public function store(PostRequest $request)
     {
         $post = Post::create($request->all());
+
+        $post->tags()->attach($request->tags);
 
         if ($post) {
             return redirect()
@@ -82,6 +86,8 @@ class PostController extends Controller
      */
     public function update(PostRequest $request, Post $post)
     {
+        $post->tags()->sync($request->tags);
+
         if ($post->update($request->all())) {
             $flash = ['success' => 'データを更新しました。'];
         } else {
@@ -101,6 +107,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
+        $post->tags()->detach();
+        
         if ($post->delete()) {
             $flash = ['success' => 'データを削除しました。'];
         } else {
