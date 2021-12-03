@@ -14,12 +14,13 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(string $tagSlug = null)
     {
         // 公開・新しい順に表示
-        $posts = Post::publicList();
+        $posts = Post::publicList($tagSlug);
+        $tags = Tag::all();
 
-        return view('front.posts.index', compact('posts'));
+        return view('front.posts.index', compact('posts', 'tags'));
     }
 
     /**
