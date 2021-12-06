@@ -47,7 +47,7 @@ class Post extends Model
     }
 
     // 公開記事一覧取得
-    public function scopePublicList(Builder $query, string $tagSlug)
+    public function scopePublicList(Builder $query, ?string $tagSlug)
     {
         if ($tagSlug) {
             $query->whereHas('tags', function($query) use ($tagSlug) {

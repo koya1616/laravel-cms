@@ -20,6 +20,11 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ route('back.dashboard') }}">ダッシュボード</a></li>
+                    @can('admin')
+                    <li class="nav-item{{ Request::is('admin/users', 'admin/users/*') ? ' active' : '' }}">
+                        <a class="nav-link" href="{{ route('back.users.index') }}">ユーザー</a>
+                    </li>
+                    @endcan
                     <li class="nav-item">
                         <a href="#" class="nav-link" onClick="(function(){
                             document.getElementById('logout-form').submit();
